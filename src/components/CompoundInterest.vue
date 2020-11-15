@@ -1,18 +1,17 @@
 <template>
   <div class="compoundinterest">
-      <input v-model="inital" placeholder="Initial Investment">
-      <input v-model="contribution" placeholder="Monthly Contribution">
-      <input v-model="years" placeholder="Length of Time in Years">
-      <input v-model="annualinterest" placeholder="Annual Interest Rate">
-      <select v-model="compoundrate">
+      <input 
+      v-model="inital" v-on:keyup="calculateValue" placeholder="Initial Investment ">
+      <input v-model="contribution" v-on:keyup="calculateValue" placeholder="Monthly Contribution">
+      <input v-model="years" v-on:keyup="calculateValue" placeholder="Length of Time in Years">
+      <input v-model="annualinterest" v-on:keyup="calculateValue" placeholder="Annual Interest Rate">
+      <select v-model="compoundrate" v-on:change="calculateValue">
         <option disabled value="">Please select one</option>
         <option value="1">Anually</option>
         <option value="2"> Semi-annually</option>
         <option value="12">Monthly</option>
         <option value="365">Daily</option>
      </select>
-
-      <button v-on:click="calculateValue">Calculate</button>
       <input v-model="result" placeholder="Result" disabled>
   </div>
 </template>
@@ -22,34 +21,38 @@ export default {
   name: 'CompoundInterest',
   data() {
     return {
-        inital: 0,
-        contribution: 0,
-        years: 0,
-        annualinterest: 0,
+        inital: '',
+        contribution: '',
+        years: '',
+        annualinterest: '',
         result: 0,
-        compoundrate: 0,
+        compoundrate: '',
         contributions: [],
         values: [],
     }
   },
   methods: {
     calculateValue () {
-      this.values = []
-      this.contributions = []
-      const annualContribution = this.contribution * 12
-      const interestRate = 1 + (this.annualinterest / 100 / this.compoundrate)
-    
-      this.values.push(this.inital * 1);
-      this.contributions.push(this.inital * 1);
+      if (this.inital && this.contribution && this.years && this.annualinterest && this.compoundrate) {
+        this.values = []
+        this.contributions = []
+        const annualContribution = this.contribution * 12
+        const interestRate = 1 + (this.annualinterest / 100 / this.compoundrate)
+      
+        this.values.push(this.inital * 1);
+        this.contributions.push(this.inital * 1);
 
-      for (var i = 0; i < this.years; i++) {
-        this.values.push(this.values[i] * interestRate + (annualContribution / this.compoundrate))
-        this.contributions.push(this.contributions[i] + annualContribution);
-        for (var j = 0; j < this.compoundrate - 1; j++) {
-          this.values[i+1] = this.values[i+1] * interestRate + (annualContribution / this.compoundrate)
+        for (var i = 0; i < this.years; i++) {
+          this.values.push(this.values[i] * interestRate + (annualContribution / this.compoundrate))
+          this.contributions.push(this.contributions[i] + annualContribution);
+          for (var j = 0; j < this.compoundrate - 1; j++) {
+            this.values[i+1] = this.values[i+1] * interestRate + (annualContribution / this.compoundrate)
+          }
         }
+        this.result = this.values[this.years].toFixed(2)
+      } else {
+        this.result = 0
       }
-      this.result = this.values[this.years].toFixed(2)
     }
   }
 }
