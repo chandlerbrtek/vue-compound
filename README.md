@@ -1,4 +1,4 @@
-# vue-fire
+# vue-compound
 
 ## Project setup
 ```
